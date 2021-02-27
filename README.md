@@ -1,4 +1,4 @@
-# TIN-CHI-KMA
+# QLDT-KMA
 
 Module tích hợp để tương tác với hệ thống đăng ký tín chỉ của CMCSoft .
 Ví dụ:
