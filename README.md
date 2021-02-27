@@ -29,11 +29,11 @@ npm install --save Notekunn/qldt-kma
 
 Khởi tạo api như sau:
 
-```javascript{2}
+```javascript
 const { Client } = require('@notekunn/qldt-kma');
 const client = new Client('HOST_API');
-async function main(){
-    // Do some thing here
+async function main() {
+	// Do some thing here
 }
 main();
 ```
@@ -47,10 +47,10 @@ main();
 Sử dụng cookie có sẵn để đăng nhập
 
 ```javascript
-async function main(){
-    const cookie = 'a=1;b=2';
-    const loginSuccess = await client.login(cookie);
-    if(loginSuccess) return;
+async function main() {
+	const cookie = 'a=1;b=2';
+	const loginSuccess = await client.login(cookie);
+	if (loginSuccess) return;
 }
 main();
 ```
@@ -60,10 +60,10 @@ main();
 Sử dụng mã sinh viên và mật khẩu
 
 ```javascript
-async function main(){
-    const shouldHash = true; //True nếu mật khẩu chưa hash
-    const loginSuccess = await client.login('CT0.....', 'matkhau', true);
-    if(loginSuccess) return;
+async function main() {
+	const shouldHash = true; //True nếu mật khẩu chưa hash
+	const loginSuccess = await client.login('CT0.....', 'matkhau', true);
+	if (loginSuccess) return;
 }
 main();
 ```
@@ -97,7 +97,7 @@ const semesters = await client.showSemesters();
 	value: string;// drpSemester
 	name: string;
 }]
-*/    
+*/
 ```
 
 ### client.showTimeTable
