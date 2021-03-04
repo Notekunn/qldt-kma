@@ -84,6 +84,9 @@ class Client {
 		const role = $('#PageHeader1_lblUserRole').html();
 		return !!role;
 	}
+	getCookie(): string {
+		return this.cookie;
+	}
 	showProfile() {
 		return this.studentProfile.showProfile();
 	}

@@ -9,6 +9,7 @@ describe('Login', () => {
 		studentCode = config.studentCode;
 		host = host;
 		client = new Client(host);
+		// console.log(client.getCookie());
 	});
 	it('login with hashed password', function (done) {
 		this.timeout(5000);

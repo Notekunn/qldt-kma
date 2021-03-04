@@ -26,6 +26,11 @@ declare class Client {
 	 */
 	checkLogin(): Promise<boolean>;
 	/**
+	 * Get cookie
+	 * @returns {string} Cookie string
+	 */
+	getCookie(): string;
+	/**
 	 * show student Profile
 	 * @returns {Promise<IStudentProfile>} Student info
 	 */
