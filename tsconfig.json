@@ -1,11 +1,12 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es2015",
-		"declaration": false,
-		"outDir": "./lib",
-		"allowJs": false
-	},
-	"include": ["src/**/*"],
-	"files": ["src/Client.ts"]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }
