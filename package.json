@@ -1,6 +1,6 @@
 {
-  "name": "@notekunn/qldt-kma",
-  "version": "1.0.3",
+  "name": "qldt-kma",
+  "version": "1.0.1",
   "description": "Module tích hợp để tương tác với hệ thống đăng ký tín chỉ của CMCSoft . Ví dụ:",
   "main": "lib/index.js",
   "types": "lib/@types/index.d.ts",
