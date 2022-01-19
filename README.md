@@ -14,7 +14,10 @@ Ví dụ:
 Cài từ npmjs:
 
 ```bash
-npm install --save @notekunn/qldt-kma
+npm install --save qldt-kma
+
+# use yarn
+yarn add qldt-kma
 ```
 
 Cài từ github:
@@ -30,12 +33,12 @@ npm install --save Notekunn/qldt-kma
 Khởi tạo api như sau:
 
 ```javascript
-const { Client } = require('@notekunn/qldt-kma');
-const client = new Client('HOST_API');
+const { Client } = require('@notekunn/qldt-kma')
+const client = new Client('HOST_API')
 async function main() {
-	// Do some thing here
+  // Do some thing here
 }
-main();
+main()
 ```
 
 ## LOGIN
@@ -48,11 +51,11 @@ Sử dụng cookie có sẵn để đăng nhập
 
 ```javascript
 async function main() {
-	const cookie = 'a=1;b=2';
-	const loginSuccess = await client.login(cookie);
-	if (loginSuccess) return;
+  const cookie = 'a=1;b=2'
+  const loginSuccess = await client.login(cookie)
+  if (loginSuccess) return
 }
-main();
+main()
 ```
 
 ### Login bằng password
@@ -61,11 +64,11 @@ Sử dụng mã sinh viên và mật khẩu
 
 ```javascript
 async function main() {
-	const shouldHash = true; //True nếu mật khẩu chưa hash
-	const loginSuccess = await client.login('CT0.....', 'matkhau', true);
-	if (loginSuccess) return;
+  const shouldHash = true //True nếu mật khẩu chưa hash
+  const loginSuccess = await client.login('CT0.....', 'matkhau', true)
+  if (loginSuccess) return
 }
-main();
+main()
 ```
 
 ## CÁC API
@@ -75,7 +78,7 @@ main();
 Lấy thông tin sinh viên
 
 ```javascript
-const info = await client.showProfile();
+const info = await client.showProfile()
 /**
 {
     displayName: string;
@@ -91,7 +94,7 @@ const info = await client.showProfile();
 Lấy thông tin các học kỳ
 
 ```javascript
-const semesters = await client.showSemesters();
+const semesters = await client.showSemesters()
 /**
 [{
 	value: string;// drpSemester
@@ -105,7 +108,7 @@ const semesters = await client.showSemesters();
 Lấy thông tin thời khóa biểu của sinh viên
 
 ```javascript
-const schedule = await client.showTimeTable(drpSemester);
+const schedule = await client.showTimeTable(drpSemester)
 /**
 [{
 	day: string;
