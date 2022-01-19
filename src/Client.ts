@@ -53,7 +53,6 @@ class Client {
     this.studentProfile = new Profile(this)
     this.studentTimeTable = new TimeTable(this)
   }
-  login(cookie: string): Promise<boolean>
   async login(studentCode: string, password?: string, shouldHash = true): Promise<boolean> {
     await this.initField()
     if (!studentCode) throw new Error('You need to specify student code and password or cookie')
@@ -75,11 +74,13 @@ class Client {
     }
     return this.checkLogin()
   }
+
   async initField() {
     const { data: $ } = await this.api.get(`/CMCSoft.IU.Web.info/Login.aspx`)
     this.initialField = parseInitialFormData($)
     return this
   }
+
   async checkLogin(): Promise<boolean> {
     if (!this.cookie) return false
     const { data } = await this.api.get(`/CMCSoft.IU.Web.Info/Home.aspx`)
@@ -87,15 +88,19 @@ class Client {
     const role = $('#PageHeader1_lblUserRole').html()
     return !!role
   }
+
   getCookie(): string {
     return this.cookie
   }
+
   showProfile() {
     return this.studentProfile.showProfile()
   }
+
   showSemesters() {
     return this.studentTimeTable.showSemesters()
   }
+
   showTimeTable(drpSemester: string) {
     return this.studentTimeTable.showTimeTable(drpSemester)
   }
