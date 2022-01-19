@@ -1,5 +1,6 @@
 import { IStudentSchedule } from '../TimeTable'
 import xlsx from 'node-xlsx'
+import { getAllDayBetween } from './time'
 
 interface ParserResult {
   scheduleData: IStudentSchedule[]
@@ -38,43 +39,50 @@ const fieldName = [
   'thời gian học',
 ]
 const parser = async (buffer: Buffer): Promise<ParserResult> => {
-  const workSheet = xlsx.parse(buffer)[0].data as string[][]
-  if (!validateSheet(workSheet))
-    return Promise.reject(Error('Không phải thời khóa biểu học viện mật mã'))
+  try {
+    const workSheet = xlsx.parse(buffer)[0].data as string[][]
+    if (!validateSheet(workSheet))
+      return Promise.reject(Error('Không phải thời khóa biểu học viện mật mã'))
 
-  const studentCode = getStudentCode(workSheet)
-  const studentName = getStudentName(workSheet)
+    const studentCode = getStudentCode(workSheet)
+    const studentName = getStudentName(workSheet)
 
-  const [header, ...dataToParse] = workSheet.filter(filterData)
-  const [
-    dateIndex,
-    subjectCodeIndex,
-    subjectNameIndex,
-    classNameIndex,
-    teacherIndex,
-    lessonIndex,
-    roomIndex,
-    timeIndex,
-  ] = fieldName.map((field) => header.findIndex((e) => !!e && e.toLowerCase() === field))
-  const scheduleData: IStudentSchedule[] = []
-  for (const row of dataToParse) {
-    const [timeStart, timeEnd] = row[timeIndex].split('-')
-    scheduleData.push({
-      subjectName: row[subjectNameIndex],
-      subjectCode: row[subjectCodeIndex],
-      className: row[classNameIndex],
-      teacher: row[teacherIndex],
-      room: row[roomIndex],
-      lesson: row[lessonIndex] as IStudentSchedule['lesson'],
-      day: row[dateIndex],
-      date: new Date(),
-    })
-  }
+    const [header, ...dataToParse] = workSheet.filter(filterData)
+    const [
+      dateIndex,
+      subjectCodeIndex,
+      subjectNameIndex,
+      classNameIndex,
+      teacherIndex,
+      lessonIndex,
+      roomIndex,
+      timeIndex,
+    ] = fieldName.map((field) => header.findIndex((e) => !!e && e.toLowerCase() === field))
+    const scheduleData: IStudentSchedule[] = []
+    for (const row of dataToParse) {
+      const [timeStart, timeEnd] = row[timeIndex].split('-')
+      const dates = getAllDayBetween(timeStart, timeEnd, parseInt(row[dateIndex]) || 1)
+      for (const date of dates) {
+        scheduleData.push({
+          date,
+          day: row[dateIndex],
+          subjectCode: row[subjectCodeIndex],
+          subjectName: row[subjectNameIndex],
+          className: row[classNameIndex],
+          teacher: row[teacherIndex],
+          lesson: row[lessonIndex] as IStudentSchedule['lesson'],
+          room: row[roomIndex],
+        })
+      }
+    }
 
-  return {
-    scheduleData: [],
-    studentCode,
-    studentName,
+    return {
+      scheduleData,
+      studentCode,
+      studentName,
+    }
+  } catch (error: any) {
+    return Promise.reject(`Có lỗi xảy ra trong quá trình parse: ${error.message}`)
   }
 }
 
