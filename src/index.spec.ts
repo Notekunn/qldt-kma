@@ -8,36 +8,30 @@ describe('Login', () => {
     // cookie = client.getCookie()
   })
 
-  it('login with password', function (done) {
-    client
-      .loginWithPassword(studentCode, password)
-      .then((result) => {
-        expect(result.status).toBe('success')
-        expect(result.fields).toBeDefined()
-        done()
-      })
-      .catch(done)
+  it('login with password', async function () {
+    const result = await client.loginWithPassword(studentCode, password)
+    expect(result.status).toBe('success')
+    expect(result.fields).toBeDefined()
   })
 
-  it('login with wrong password', function (done) {
-    client
-      .loginWithPassword(studentCode, 'wrong password')
-      .then((result) => {
-        expect(result.status).toBe('error')
-        expect(result.fields).toBeUndefined()
-        done()
-      })
-      .catch(done)
+  it('login with wrong password', async function () {
+    const result = await client.loginWithPassword(studentCode, 'wrong password')
+    expect(result.status).toBe('error')
+    expect(result.fields).toBeUndefined()
   })
 
-  it('login with password hashed', function (done) {
-    client
-      .loginWithPassword(studentCode, passwordHashed, false)
-      .then((result) => {
-        expect(result.status).toBe('success')
-        expect(result.fields).toBeDefined()
-        done()
-      })
-      .catch(done)
+  it('login with password hashed', async function () {
+    const result = await client.loginWithPassword(studentCode, passwordHashed, false)
+    expect(result.status).toBe('success')
+    expect(result.fields).toBeDefined()
+  })
+
+  it('login with cookie', async function () {
+    const result = await client.loginWithPassword(studentCode, password)
+    expect(result.status).toBe('success')
+    const cookie = client.getCookie()
+    expect(cookie).toBeDefined()
+    const result2 = await client.loginWithCookie(cookie)
+    expect(result2.status).toBe('success')
   })
 })

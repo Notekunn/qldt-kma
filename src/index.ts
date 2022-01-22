@@ -55,6 +55,21 @@ export class Client {
     }
   }
 
+  async loginWithCookie(cookie: string) {
+    this.cookie = cookie
+    const loginResult = await this.checkLogin()
+    if (!loginResult.status) throw new Error('Login failed')
+    return {
+      status: 'success',
+      message: 'Login successfully',
+      fields: loginResult.fields,
+    }
+  }
+
+  getCookie() {
+    return this.cookie
+  }
+
   private async checkLogin(): Promise<{ status: boolean; fields?: Record<string, string> }> {
     if (!this.cookie)
       return {
