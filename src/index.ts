@@ -1,8 +1,25 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import cheerio, { CheerioAPI } from 'cheerio'
 import md5 from 'md5'
 import qs from 'qs'
 import fs from 'fs'
+export interface IStudentProfile {
+  displayName: string
+  studentCode: string
+  gender: string
+  birthday: string
+}
+
+class HttpException extends Error {
+  status: number
+  message: string
+  constructor(status: number, message?: string) {
+    super(message)
+    this.status = status
+    this.message = message || ''
+  }
+}
+
 export class Client {
   private cookie: string = ''
   private host: string = 'http://qldt.actvn.edu.vn'
@@ -68,6 +85,25 @@ export class Client {
 
   getCookie() {
     return this.cookie
+  }
+
+  async getProfile(cookie: string): Promise<IStudentProfile> {
+    const loginData = await this.loginWithCookie(cookie)
+    if (loginData.status !== 'success') throw new HttpException(401, 'Login failed')
+    const PROFILE_URL = '/CMCSoft.IU.Web.Info/StudentProfileNew/HoSoSinhVien.aspx'
+    const { data: $ } = (await this.api.get(PROFILE_URL)) as AxiosResponse<CheerioAPI>
+    const firstName = this.formatString($('input[name="txtTen"]').val() as string)
+    const lastName = this.formatString($('input[name="txtHoDem"]').val() as string)
+    const displayName = [lastName, firstName].join(' ')
+    const studentCode = $('input[name="txtMaSV"]').val() as string
+    const gender = $('select[name="drpGioiTinh"] > option[selected]').text()
+    const birthday = $('input[name="txtNgaySinh"]').val() as string
+    return {
+      displayName,
+      studentCode,
+      gender,
+      birthday,
+    }
   }
 
   private async checkLogin(): Promise<{ status: boolean; fields?: Record<string, string> }> {
