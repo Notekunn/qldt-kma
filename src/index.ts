@@ -3,6 +3,7 @@ import cheerio, { CheerioAPI } from 'cheerio'
 import md5 from 'md5'
 import qs from 'qs'
 import fs from 'fs'
+import scheduleParser from './parser'
 export interface IStudentProfile {
   displayName: string
   studentCode: string
@@ -17,7 +18,7 @@ export interface IStudentSemester {
 
 export interface IStudentSchedule {
   date: Date
-  day: string
+  dayOfWeek: number
   subjectCode: string
   subjectName: string
   className: string
@@ -140,6 +141,24 @@ export class Client {
       semesters,
       fields,
     } as const
+  }
+
+  async getSchedule(cookie: string, preFields: Record<string, string>, drpSemester: string) {
+    const formData = {
+      ...preFields,
+      drpTerm: 1,
+      drpType: 'B',
+      btnView: 'Xuất file Excel',
+      drpSemester: drpSemester || preFields.drpSemester,
+    }
+    const SEMESTER_URL = '/CMCSoft.IU.Web.Info/Reports/Form/StudentTimeTable.aspx'
+    const response = await this.api.post(SEMESTER_URL, formData, {
+      transformResponse: [],
+      responseType: 'arraybuffer',
+    })
+    const buffer = Buffer.from(response.data, 'binary')
+    const { scheduleData } = await scheduleParser(buffer)
+    return scheduleData
   }
 
   private async checkLogin(): Promise<{ status: boolean; fields?: Record<string, string> }> {

@@ -55,7 +55,7 @@ describe('Profile', () => {
   })
 })
 
-describe('Semester', () => {
+describe('Schedule', () => {
   const { studentCode = '', password = '', studentName = '' } = process.env
   let client: Client
   let cookie: string
@@ -70,5 +70,16 @@ describe('Semester', () => {
     expect(result).toBeDefined()
     expect(result.fields).toBeDefined()
     expect(result.semesters).not.toHaveLength(0)
+  })
+
+  it('show schedule', async function () {
+    const result = await client.getSemesters(cookie)
+    const semester = result.semesters[1]
+    const result2 = await client.getSchedule(cookie, result.fields, semester.value)
+    expect(result2).toBeDefined()
+    expect(result2).not.toHaveLength(0)
+    expect(result2[0].date).toBeInstanceOf(Date)
+    expect(result2[0].dayOfWeek).toBeGreaterThanOrEqual(2)
+    expect(result2[0].dayOfWeek).toBeLessThanOrEqual(8)
   })
 })
