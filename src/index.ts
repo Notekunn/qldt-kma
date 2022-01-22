@@ -10,6 +10,22 @@ export interface IStudentProfile {
   birthday: string
 }
 
+export interface IStudentSemester {
+  value: string
+  name: string
+}
+
+export interface IStudentSchedule {
+  date: Date
+  day: string
+  subjectCode: string
+  subjectName: string
+  className: string
+  teacher: string
+  lesson: '1,2,3' | '4,5,6' | '7,8,9' | '10,11,12' | '13,14,15'
+  room: string
+}
+
 class HttpException extends Error {
   status: number
   message: string
@@ -38,7 +54,7 @@ export class Client {
   ) {
     try {
       const { data: preLoginData } = await this.api.get('/CMCSoft.IU.Web.info/Login.aspx')
-      const otherField = this.extractFormData(preLoginData)
+      const otherField = this.extractInitField(preLoginData)
       const txtPassword = shouldHashPassword ? md5(password) : password
       const txtUserName = this.formatString(studentCode)
       const formData = {
@@ -104,6 +120,26 @@ export class Client {
       gender,
       birthday,
     }
+  }
+
+  async getSemesters(cookie: string) {
+    const loginData = await this.loginWithCookie(cookie)
+    if (loginData.status !== 'success') throw new HttpException(401, 'Login failed')
+    const SEMESTER_URL = '/CMCSoft.IU.Web.Info/Reports/Form/StudentTimeTable.aspx'
+    const { data: $ } = (await this.api.get(SEMESTER_URL)) as AxiosResponse<CheerioAPI>
+    const semesterSelector = Array.from($('select[name="drpSemester"] > option'))
+    const semesters: IStudentSemester[] = semesterSelector.map((e) => ({
+      value: $(e).attr('value') || '',
+      name: $(e).text(),
+    }))
+    const fields: Record<string, string> = {
+      ...this.extractInitField($),
+      ...this.extractSelector($),
+    }
+    return {
+      semesters,
+      fields,
+    } as const
   }
 
   private async checkLogin(): Promise<{ status: boolean; fields?: Record<string, string> }> {
@@ -180,7 +216,7 @@ export class Client {
     return this.formatString(error)
   }
 
-  private extractFormData($: CheerioAPI): Record<string, string> {
+  private extractInitField($: CheerioAPI): Record<string, string> {
     const form = $('form')
     const select = form.find('select')
     const input = form.find('input[type!="submit"][type!="checkbox"]')
@@ -213,13 +249,6 @@ export class Client {
       data[key] = $(options).attr('value') || ''
     })
     return data
-  }
-
-  private extractInitField($: CheerioAPI): Record<string, string> {
-    return {
-      ...this.extractFormData($),
-      ...this.extractSelector($),
-    }
   }
 
   private getRole($: CheerioAPI): string {

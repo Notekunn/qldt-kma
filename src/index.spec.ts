@@ -1,6 +1,6 @@
 import { Client } from './'
 
-describe.skip('Login', () => {
+describe('Login', () => {
   const { studentCode = '', password = '', passwordHashed = '' } = process.env
   let client: Client
   let cookie: string
@@ -52,5 +52,23 @@ describe('Profile', () => {
     expect(profile).toBeDefined()
     expect(profile.displayName).toEqual(studentName)
     expect(profile.studentCode).toEqual(studentCode)
+  })
+})
+
+describe('Semester', () => {
+  const { studentCode = '', password = '', studentName = '' } = process.env
+  let client: Client
+  let cookie: string
+  beforeAll(async () => {
+    client = new Client()
+    const result = await client.loginWithPassword(studentCode, password)
+    cookie = client.getCookie()
+  })
+
+  it('show semesters', async function () {
+    const result = await client.getSemesters(cookie)
+    expect(result).toBeDefined()
+    expect(result.fields).toBeDefined()
+    expect(result.semesters).not.toHaveLength(0)
   })
 })
