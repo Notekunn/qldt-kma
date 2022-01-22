@@ -27,6 +27,11 @@ export interface IStudentSchedule {
   room: string
 }
 
+export interface ILoginResult {
+  status: 'success' | 'error'
+  message: string
+  fields?: Record<string, string>
+}
 class HttpException extends Error {
   status: number
   message: string
@@ -52,7 +57,7 @@ export class Client {
     studentCode: string,
     password: string,
     shouldHashPassword: boolean = true
-  ) {
+  ): Promise<ILoginResult> {
     try {
       const { data: preLoginData } = await this.api.get('/CMCSoft.IU.Web.info/Login.aspx')
       const otherField = this.extractInitField(preLoginData)
@@ -75,10 +80,11 @@ export class Client {
       if (errorMessage) throw new Error(errorMessage)
       this.cookie = headers['set-cookie']?.join(';') || ''
       const loginResult = await this.checkLogin()
-      if (!loginResult.status) throw new Error('Login failed')
       return {
-        status: 'success',
-        message: 'Login successfully',
+        status: loginResult.status ? 'success' : 'error',
+        message: loginResult.status
+          ? 'Login with password successfully'
+          : 'Login with password failed',
         fields: loginResult.fields,
       }
     } catch (error: any) {
@@ -89,13 +95,12 @@ export class Client {
     }
   }
 
-  async loginWithCookie(cookie: string) {
+  async loginWithCookie(cookie: string): Promise<ILoginResult> {
     this.cookie = cookie
     const loginResult = await this.checkLogin()
-    if (!loginResult.status) throw new Error('Login failed')
     return {
-      status: 'success',
-      message: 'Login successfully',
+      status: loginResult.status ? 'success' : 'error',
+      message: loginResult.status ? 'Login with cookie successfully' : 'Login with cookie failed',
       fields: loginResult.fields,
     }
   }

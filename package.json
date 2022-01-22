@@ -1,13 +1,14 @@
 {
   "name": "qldt-kma",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "Module tích hợp để tương tác với hệ thống đăng ký tín chỉ của CMCSoft.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --coverage",
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "prepublishOnly": "yarn build"
   },
   "author": "Trần Đức Cường <clonebmn2itt@gmail.com>",
   "license": "ISC",
