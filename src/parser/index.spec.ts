@@ -10,6 +10,7 @@ describe('parseSchedule()', () => {
     parseSchedule(buffer)
       .then((data) => {
         expect(data.scheduleData).toHaveLength(116)
+        expect(data.scheduleData[0].dayOfWeek).toBe(2)
         done()
       })
       .catch(done)

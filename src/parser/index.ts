@@ -1,4 +1,4 @@
-import { IStudentSchedule } from '../TimeTable'
+import { IStudentSchedule } from '../'
 import xlsx from 'node-xlsx'
 import { getAllDayBetween } from './time'
 
@@ -63,9 +63,10 @@ const parser = async (buffer: Buffer): Promise<ParserResult> => {
       const [timeStart, timeEnd] = row[timeIndex].split('-')
       const dates = getAllDayBetween(timeStart, timeEnd, parseInt(row[dateIndex]) || 1)
       for (const date of dates) {
+        const dayOfWeek = date.getDay() == 0 ? 8 : date.getDay() + 1
         scheduleData.push({
           date,
-          day: row[dateIndex],
+          dayOfWeek: dayOfWeek,
           subjectCode: row[subjectCodeIndex],
           subjectName: row[subjectNameIndex],
           className: row[classNameIndex],
